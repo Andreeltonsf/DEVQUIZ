@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import {QuestionAnswer } from '../QuestionAnswer';
-
+import {Result} from '../Result'
 import S from './styles.module.css';
 import { Button } from '../Button';
 
@@ -43,8 +43,9 @@ export function Quiz (){
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
     const [correctAnswerCount, setCorrectAnswersCount] = useState(0)
     const[IsCurrentQuestionAnswered,setIsCurrentQuestionAnswered] = useState(false)
+    const [isTakingQuiz,setTakingQuiz] = useState(true)
 
-
+    const quizSize = QUESTIONS.length
 
     const handleAnswerQuestion = (event, question, answer) =>{ 
           if(IsCurrentQuestionAnswered){
@@ -65,25 +66,37 @@ export function Quiz (){
     }
 
     const handleNextQuestion = () => {
-        if(currentQuestionIndex + 1 < QUESTIONS.length){
+        if(currentQuestionIndex + 1 < quizSize){
             setCurrentQuestionIndex(index => index + 1)
+        }
+
+        else{
+            setTakingQuiz(false)
         }
         
         setIsCurrentQuestionAnswered(false)
 
     }
 
+    const handleTryAgain = ( ) => {
+        setTakingQuiz(true)
+        setCorrectAnswersCount(0)
+        setCurrentQuestionIndex(0)
+    }
+
     const currentQuestion = QUESTIONS[currentQuestionIndex]
+    const navigationButtonText = currentQuestion + 1 === quizSize ? 'Ver Resultado' : 'Proxima Pergunta'
 
     return(
         <div className={S.container}>
-            <div className={S.card}>
-                <div className={S.quiz}>
+        <div className={S.card}>
+            {isTakingQuiz ? (
+                <div className ={S.quiz}>
                     <header className={S.quizHeader}>
-                        <span className={S.questionCount}>Pergunta 1/3</span>
+                        <span className={S.questionCount}>Pergunta 1/4</span>
                         <p className={S.question}>
                             {currentQuestion.question}
-                            </p>
+                        </p>
                     </header>
                     <ul className={S.answers}>
                         {currentQuestion.answers.map(answer => (
@@ -92,17 +105,25 @@ export function Quiz (){
                                 answer = {answer} 
                                 question = {currentQuestion} 
                                 handleAnswerQuestion = {handleAnswerQuestion}
-
                                 />
-                           </li>
+                            </li>
                         ))}
                     </ul>
-
-                    <Button onClick={handleNextQuestion}>Proxima Pergunta</Button>
-
+    
+                    {IsCurrentQuestionAnswered && (
+                        <Button onClick={handleNextQuestion}>{navigationButtonText} </Button>
+                    )}
                 </div>
-            </div>
+            ) : (
+                <Result
+                    correctAnswerCount = {correctAnswerCount}
+                    quizSize ={quizSize}
+                    handleTryAgain={handleTryAgain}
+                />
+            )}
         </div>
-        
+    </div>
+
     )
+        
 }
