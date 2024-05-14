@@ -3,6 +3,7 @@ import { useState } from 'react';
 import {QuestionAnswer } from '../QuestionAnswer';
 
 import S from './styles.module.css';
+import { Button } from '../Button';
 
 
 const QUESTIONS = [
@@ -38,7 +39,8 @@ const QUESTIONS = [
 
 
 export function Quiz (){
-    const currentQuestion = QUESTIONS[0];
+   
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
     const [correctAnswerCount, setCorrectAnswersCount] = useState(0)
     const[IsCurrentQuestionAnswered,setIsCurrentQuestionAnswered] = useState(false)
 
@@ -62,6 +64,17 @@ export function Quiz (){
 
     }
 
+    const handleNextQuestion = () => {
+        if(currentQuestionIndex + 1 < QUESTIONS.length){
+            setCurrentQuestionIndex(index => index + 1)
+        }
+        
+        setIsCurrentQuestionAnswered(false)
+
+    }
+
+    const currentQuestion = QUESTIONS[currentQuestionIndex]
+
     return(
         <div className={S.container}>
             <div className={S.card}>
@@ -84,6 +97,8 @@ export function Quiz (){
                            </li>
                         ))}
                     </ul>
+
+                    <Button onClick={handleNextQuestion}>Proxima Pergunta</Button>
 
                 </div>
             </div>
